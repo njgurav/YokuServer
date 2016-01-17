@@ -1,0 +1,17 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>YokuServer</groupId>
+    <artifactId>Users</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+  </parent>
+  <artifactId>Users.Sales</artifactId>
+  <name>Users.Sales</name>
+  <description>All the sales related files to be kept here</description>
+  <packaging>pom</packaging>
+  <modules>
+  	<module>Users.Sales.DTO</module>
+  	<module>Users.Sales.Entity</module>
+  	<module>Users.Sales.Services</module>
+  </modules>
+</project>

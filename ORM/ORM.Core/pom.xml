@@ -1,0 +1,11 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>YokuServer</groupId>
+    <artifactId>ORM</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+  </parent>
+  <artifactId>ORM.Core</artifactId>
+  <name>ORM.Core</name>
+  <description>All the Orm core related files to be kept here... these files are the files which should be independent of the underlying ORM implementation used</description>
+</project>

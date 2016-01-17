@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-configuration SYSTEM 
+"http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+
+<hibernate-configuration>
+	<session-factory>
+		<property name="hibernate.dialect">
+			org.hibernate.dialect.MySQLDialect
+		</property>
+		<property name="hibernate.connection.driver_class">
+			com.mysql.jdbc.Driver
+		</property>
+		<!-- <property name="hibernate.connection.url">jdbc:mysql://yokudbinstance.cqduivf0dksm.us-east-1.rds.amazonaws.com:3306/yoku?</property> 
+			<property name="hibernate.connection.username">yokuadmin</property> <property 
+			name="hibernate.connection.password">yoku2015!</property> -->
+
+		<property name="hibernate.connection.url">jdbc:mysql://localhost:3306/yoku</property>
+		<property name="hibernate.connection.username">niraj</property>
+		<property name="hibernate.connection.password">niraj</property>
+
+		<property name="hibernate.hbm2ddl.auto">update</property>
+
+		<!-- List of XML mapping files -->
+
+		<mapping class="com.yoku.server.framework.entity.merchant.Merchant" />
+		<mapping
+			class="com.yoku.server.framework.entity.merchant.MerchantPrimaryDetails" />
+		<mapping
+			class="com.yoku.server.framework.entity.merchant.MerchantBusinessDetails" />
+		<mapping
+			class="com.yoku.server.framework.entity.merchant.MerchantPaymentDetails" />
+		<mapping class="com.yoku.server.framework.entity.common.product.Product" />
+		<mapping class="com.yoku.server.framework.entity.common.product.ProductKey" />
+		<mapping
+			class="com.yoku.server.framework.entity.common.product.ProductFashion" />
+		<mapping
+			class="com.yoku.server.framework.entity.common.product.ProductFashionKey" />
+		<mapping
+			class="com.yoku.server.framework.entity.common.product.ProductGrocery" />
+		<mapping
+			class="com.yoku.server.framework.entity.common.product.ProductGroceryKey" />
+		<mapping
+			class="com.yoku.server.framework.entity.common.product.ProductRestraunt" />
+		<mapping
+			class="com.yoku.server.framework.entity.common.product.ProductRestrauntKey" />
+		<mapping class="com.yoku.server.framework.entity.common.order.Order" />
+		<mapping class="com.yoku.server.framework.entity.common.order.OrderKey" />
+		<mapping class="com.yoku.server.framework.entity.common.order.OrderDetails" />
+		<mapping
+			class="com.yoku.server.framework.entity.common.order.OrderDetailsKey" />
+	</session-factory>
+</hibernate-configuration>
