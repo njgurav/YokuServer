@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.yoku.server.exception.session.LoginSessionException;
 import com.yoku.server.framework.dto.BaseDTO;
 import com.yoku.server.framework.dto.TransactionStatus;
 import com.yoku.server.framework.dto.merchant.MerchantDetailsResponseDTO;
@@ -21,6 +22,8 @@ import com.yoku.server.framework.dto.merchant.registration.MerchantPrimaryDetail
 import com.yoku.server.framework.dto.merchant.registration.MerchantRegistrationDTO;
 import com.yoku.server.framework.dto.merchant.registration.MerchantRegistrationIdResponseDTO;
 import com.yoku.server.infra.constants.Constants;
+import com.yoku.server.infra.logger.ILogger;
+import com.yoku.server.infra.logger.LoggerFactory;
 import com.yoku.server.rest.services.AbstractRestService;
 
 /**
@@ -31,12 +34,16 @@ import com.yoku.server.rest.services.AbstractRestService;
 public class Merchant extends AbstractRestService {
 
 	/**
+	 * Logger instance.
+	 */
+	private static final ILogger logger = LoggerFactory.getLogger(Merchant.class);
+	
+	/**
 	 * Generate Registration Id for new merchants.
 	 */
 	@RequestMapping(value = "/register", method = RequestMethod.POST, consumes = Constants.APPLICATION_JSON, produces = Constants.APPLICATION_JSON)
 	public ResponseEntity<BaseDTO> register() {
-		com.yoku.server.core.services.Merchant service = new com.yoku.server.core.services.Merchant(
-				"");
+		com.yoku.server.core.services.Merchant service = new com.yoku.server.core.services.Merchant("");
 		MerchantRegistrationIdResponseDTO response = service.register();
 		return super.buildResponse(HttpStatus.ACCEPTED, response);
 	}
@@ -52,9 +59,18 @@ public class Merchant extends AbstractRestService {
 	 */
 	@RequestMapping(value = "{merchantId}/home", method = RequestMethod.GET, produces = Constants.APPLICATION_JSON)
 	public ResponseEntity<BaseDTO> dashboard(@PathVariable String merchantId) {
-		com.yoku.server.core.services.Merchant service = new com.yoku.server.core.services.Merchant(merchantId);
-		MerchantDetailsResponseDTO response = service.fetchDetails(merchantId);
-		return super.buildResponse(HttpStatus.OK, response);
+		MerchantDetailsResponseDTO response = null;
+		HttpStatus status = null;
+		try {
+			String merId = super.beginMerchantSession(merchantId);
+			com.yoku.server.core.services.Merchant service = new com.yoku.server.core.services.Merchant(merId);
+			response = service.fetchDetails(merId);
+			status = HttpStatus.OK;
+		} catch (LoginSessionException e) {
+			status = HttpStatus.BAD_REQUEST;
+			logger.error(e.getMessage(), e);
+		}
+		return super.buildResponse(status, response);
 	}
 
 	/**
@@ -200,17 +216,15 @@ public class Merchant extends AbstractRestService {
 	public ResponseEntity<BaseDTO> updateProfilePic() {
 		return null;
 	}
+
 	/**
 	 * Get Merchant ID for the provided RegistrationId.
 	 */
 	@RequestMapping(value = "{registrationId}/id", method = RequestMethod.POST)
-	public ResponseEntity<BaseDTO> getMerchantId(@PathVariable String registrationId){
+	public ResponseEntity<BaseDTO> getMerchantId(@PathVariable String registrationId) {
 		com.yoku.server.core.services.Merchant service = new com.yoku.server.core.services.Merchant(registrationId);
 		MerchantIdResponseDTO response = service.getMerchantId(registrationId);
 		return super.buildResponse(HttpStatus.OK, response);
 	}
-	
-	
-	
 
 }

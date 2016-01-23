@@ -8,9 +8,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.yoku.server.exception.session.InvalidUserException;
+import com.yoku.server.exception.session.LoginSessionException;
 import com.yoku.server.framework.dto.BaseDTO;
 import com.yoku.server.infra.constants.Constants;
+import com.yoku.server.infra.logger.ILogger;
+import com.yoku.server.infra.logger.LoggerFactory;
 import com.yoku.server.order.dto.OrderDetailsResponseDTO;
 import com.yoku.server.rest.services.AbstractRestService;
 
@@ -22,6 +24,12 @@ import com.yoku.server.rest.services.AbstractRestService;
 @RestController
 @RequestMapping("/merchant/{merchantId}/order")
 public class MerchantOrder extends AbstractRestService {
+	
+	/**
+	 * Logger instance.
+	 */
+	private static final ILogger logger = LoggerFactory.getLogger(MerchantOrder.class);
+
 	/**
 	 * Constructor
 	 */
@@ -42,9 +50,9 @@ public class MerchantOrder extends AbstractRestService {
 			com.yoku.server.core.services.order.Order service = new com.yoku.server.core.services.order.Order();
 			response = service.readAll(merId, status);
 			httpStatus = HttpStatus.OK;
-		} catch (InvalidUserException e) {
+		} catch (LoginSessionException e) {
 			httpStatus = HttpStatus.BAD_REQUEST;
-			e.printStackTrace();
+			logger.error(e.getMessage(), e);
 		}
 		return super.buildResponse(httpStatus, response);
 	}
@@ -63,9 +71,9 @@ public class MerchantOrder extends AbstractRestService {
 			com.yoku.server.core.services.order.Order service = new com.yoku.server.core.services.order.Order();
 			response = service.read(merId, orderId);
 			httpStatus = HttpStatus.OK;
-		} catch (InvalidUserException e) {
+		} catch (LoginSessionException e) {
 			httpStatus = HttpStatus.BAD_REQUEST;
-			e.printStackTrace();
+			logger.error(e.getMessage(), e);
 		}
 		return super.buildResponse(httpStatus, response);
 	}
@@ -82,9 +90,8 @@ public class MerchantOrder extends AbstractRestService {
 			String merId = super.beginMerchantSession(merchantId);
 			com.yoku.server.core.services.order.Order service = new com.yoku.server.core.services.order.Order();
 			service.updateStatusByMerchant(merId, orderId, status);
-		} catch (InvalidUserException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (LoginSessionException e) {
+			logger.error(e.getMessage(), e);
 		}
 		return null;
 	}

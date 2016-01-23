@@ -81,8 +81,7 @@ public class Login extends AbstractService {
 				params.put("registrationId", merchant.getKey().getRegistrationId());
 				List<?> merchantData = adapter.executeSQLQuery(query, params);
 				if (!(merchantData.isEmpty())) {
-					Object[] data = (Object[]) merchantData.get(0);
-					merchantId = (String) data[0];
+					merchantId = (String) merchantData.get(0);
 				}else{
 					//throw invalid login exception
 				}

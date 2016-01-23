@@ -23,6 +23,14 @@ public class Address implements IEntity {
 	 */
 	@EmbeddedId
 	private AddressKey key;
+	
+	/**
+	 * Identifier for the user for whom the address is being stored.
+	 */
+	@Column(name="user_id")
+	private String userId;
+	
+
 	/**
 	 * Latitude
 	 */
@@ -36,7 +44,7 @@ public class Address implements IEntity {
 	/**
 	 * PlaceId. Mostly google placeId.
 	 */
-	@Column(name = "plcae_id")
+	@Column(name = "place_id")
 	private String placeId;
 	/**
 	 * Title
@@ -278,16 +286,30 @@ public class Address implements IEntity {
 	public void setKey(AddressKey key) {
 		this.key = key;
 	}
+	
+	/**
+	 * @return the userId
+	 */
+	public String getUserId() {
+		return userId;
+	}
 
-	/* (non-Javadoc)
+	/**
+	 * @param userId the userId to set
+	 */
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
+
+	/** (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
 	public String toString() {
-		return "Address [key=" + key + ", latitude=" + latitude + ", longitude=" + longitude + ", placeId=" + placeId
-				+ ", title=" + title + ", description=" + description + ", country=" + country + ", state=" + state
-				+ ", city=" + city + ", zipcode=" + zipcode + ", line1=" + line1 + ", line2=" + line2 + ", landmark="
-				+ landmark + "]";
+		return "Address [key=" + key + ", userId=" + userId + ", latitude=" + latitude + ", longitude=" + longitude
+				+ ", placeId=" + placeId + ", title=" + title + ", description=" + description + ", country=" + country
+				+ ", state=" + state + ", city=" + city + ", zipcode=" + zipcode + ", line1=" + line1 + ", line2="
+				+ line2 + ", landmark=" + landmark + "]";
 	}
 
 }

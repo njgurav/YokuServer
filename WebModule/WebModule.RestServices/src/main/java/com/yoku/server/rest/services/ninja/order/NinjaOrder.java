@@ -10,8 +10,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.yoku.server.core.dto.LocationDTO;
+import com.yoku.server.exception.session.InvalidUserException;
+import com.yoku.server.exception.session.LoginSessionException;
+import com.yoku.server.exception.session.MandatoryLoginException;
 import com.yoku.server.framework.dto.BaseDTO;
 import com.yoku.server.infra.constants.Constants;
+import com.yoku.server.infra.logger.ILogger;
+import com.yoku.server.infra.logger.LoggerFactory;
 import com.yoku.server.order.dto.OrderDetailsResponseDTO;
 import com.yoku.server.rest.services.AbstractRestService;
 
@@ -21,6 +26,12 @@ import com.yoku.server.rest.services.AbstractRestService;
 @RestController
 @RequestMapping("/ninja")
 public class NinjaOrder extends AbstractRestService {
+
+	/**
+	 * Logger instance.
+	 */
+	private static final ILogger logger = LoggerFactory.getLogger(NinjaOrder.class);
+
 	/**
 	 * Default Constructor
 	 */
@@ -49,16 +60,22 @@ public class NinjaOrder extends AbstractRestService {
 	 */
 	@RequestMapping(value = "/{ninjaId}/order/all", method = RequestMethod.GET, produces = Constants.APPLICATION_JSON)
 	public ResponseEntity<BaseDTO> readSelfAll(@PathVariable String ninjaId, @RequestParam String status) {
-		com.yoku.server.core.services.order.Order service = new com.yoku.server.core.services.order.Order();
-		OrderDetailsResponseDTO response = service.readSelfAll(ninjaId, status);
-		return super.buildResponse(HttpStatus.OK, response);
+		OrderDetailsResponseDTO response = null;
+		HttpStatus httpStatus = null;
+		try {
+			String ninId = super.beginNinjaSession(ninjaId);
+			com.yoku.server.core.services.order.Order service = new com.yoku.server.core.services.order.Order();
+			response = service.readSelfAll(ninId, status);
+			httpStatus = HttpStatus.OK;
+		} catch(LoginSessionException e){
+			logger.error(e.getMessage(), e);
+		}
+		return super.buildResponse(httpStatus, response);
 	}
 
-	
-	
 	/**
-	 * Read order details for Ninja to decide to pick a delivery.
-	 * Query on Order Details Table.
+	 * Read order details for Ninja to decide to pick a delivery. Query on Order
+	 * Details Table.
 	 * 
 	 * @return order list
 	 */
@@ -68,7 +85,6 @@ public class NinjaOrder extends AbstractRestService {
 		OrderDetailsResponseDTO response = service.readOrderDetails(orderId);
 		return super.buildResponse(HttpStatus.OK, response);
 	}
-	
 
 	/**
 	 * Update Current Order status. Select Order for delivery.
@@ -76,10 +92,9 @@ public class NinjaOrder extends AbstractRestService {
 	 * @return order list
 	 */
 	@RequestMapping(value = "{ninjaId}/order/{orderId}", method = RequestMethod.PUT, produces = Constants.APPLICATION_JSON)
-	public ResponseEntity<BaseDTO> updateStatus(@PathVariable String ninjaId, @PathVariable String orderId, @RequestParam String status) {
+	public ResponseEntity<BaseDTO> updateStatus(@PathVariable String ninjaId, @PathVariable String orderId,
+			@RequestParam String status) {
 		return null;
 	}
-
-	
 
 }

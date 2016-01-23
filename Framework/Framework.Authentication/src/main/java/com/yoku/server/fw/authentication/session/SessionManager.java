@@ -1,6 +1,7 @@
 package com.yoku.server.fw.authentication.session;
 
 import com.yoku.server.exception.session.InvalidUserException;
+import com.yoku.server.exception.session.MandatoryLoginException;
 
 /**
  * Performs operations on Session cache.
@@ -98,8 +99,13 @@ public class SessionManager {
 	 * @throws InvalidUserException
 	 *             If logged in merchant user fails to provide the correct
 	 *             validation data (auth-token and deviceId).
+	 * @throws MandatoryLoginException
+	 *             Throw this exception when a user tries to access a service
+	 *             that requires authentication, and the authentication data is
+	 *             not provided.
 	 */
-	public String validateMerchant(String merchantId, String authToken, String deviceId) throws InvalidUserException {
+	public String validateMerchant(String merchantId, String authToken, String deviceId)
+			throws InvalidUserException, MandatoryLoginException {
 		String userId = null;
 		if (isMerchantLoggedIn(merchantId)) {
 			UserContext userContext = getUserContext(Session.MERCHANT_CACHE_KEY, merchantId);
@@ -108,6 +114,8 @@ public class SessionManager {
 			} else {
 				throw new InvalidUserException("Merchant", merchantId, deviceId, authToken);
 			}
+		} else {
+			throw new MandatoryLoginException("Merchant");
 		}
 		return userId;
 	}
@@ -123,10 +131,17 @@ public class SessionManager {
 	 *            device Identifier used for login. Should be unique in a user
 	 *            session.
 	 * @return actual Ninja Id to execute Ninja service.
-	 * @throws InvalidUserException If logged in ninja user fails to provide the correct
+	 * @throws InvalidUserException
+	 *             If logged in ninja user fails to provide the correct
 	 *             validation data (auth-token and deviceId).
+	 * @throws MandatoryLoginException
+	 *             Throw this exception when a user tries to access a service
+	 *             that requires authentication, and the authentication data is
+	 *             not provided.
+	 * 
 	 */
-	public String validateNinja(String ninjaId, String authToken, String deviceId) throws InvalidUserException {
+	public String validateNinja(String ninjaId, String authToken, String deviceId)
+			throws InvalidUserException, MandatoryLoginException {
 		String userId = null;
 		if (isNinjaLoggedIn(ninjaId)) {
 			UserContext userContext = getUserContext(Session.NINJA_CACHE_KEY, ninjaId);
@@ -135,6 +150,8 @@ public class SessionManager {
 			} else {
 				throw new InvalidUserException("Ninja", ninjaId, deviceId, authToken);
 			}
+		} else {
+			throw new MandatoryLoginException("Ninja");
 		}
 		return userId;
 	}
@@ -150,10 +167,16 @@ public class SessionManager {
 	 *            device Identifier used for login. Should be unique in a user
 	 *            session.
 	 * @return actual Customer Id to execute Customer service.
-	 * @throws InvalidUserException  If logged in customer user fails to provide the correct
+	 * @throws InvalidUserException
+	 *             If logged in customer user fails to provide the correct
 	 *             validation data (auth-token and deviceId).
+	 * @throws MandatoryLoginException
+	 *             Throw this exception when a user tries to access a service
+	 *             that requires authentication, and the authentication data is
+	 *             not provided.
 	 */
-	public String validateCustomer(String customerId, String authToken, String deviceId) throws InvalidUserException {
+	public String validateCustomer(String customerId, String authToken, String deviceId)
+			throws InvalidUserException, MandatoryLoginException {
 		String userId = null;
 		if (isCustomerLoggedIn(customerId)) {
 			UserContext userContext = getUserContext(Session.CUSTOMER_CACHE_KEY, customerId);
@@ -162,6 +185,8 @@ public class SessionManager {
 			} else {
 				throw new InvalidUserException("Customer", customerId, deviceId, authToken);
 			}
+		} else {
+			throw new MandatoryLoginException("Customer");
 		}
 		return userId;
 	}
@@ -190,7 +215,7 @@ public class SessionManager {
 		context.setAuthToken(authToken);
 		context.setDeviceId(deviceId);
 		context.setAuthorizationRole(authorizationRole);
-
+		session.merchants.add(indirectedId);
 		saveUserContext(Session.MERCHANT_CACHE_KEY, indirectedId, context);
 		return false;
 	}
@@ -219,7 +244,7 @@ public class SessionManager {
 		context.setAuthToken(authToken);
 		context.setDeviceId(deviceId);
 		context.setAuthorizationRole(authorizationRole);
-
+		session.ninjas.add(indirectedId);
 		saveUserContext(Session.NINJA_CACHE_KEY, indirectedId, context);
 		return false;
 	}
@@ -248,7 +273,7 @@ public class SessionManager {
 		context.setAuthToken(authToken);
 		context.setDeviceId(deviceId);
 		context.setAuthorizationRole(authorizationRole);
-
+		session.customers.add(indirectedId);
 		saveUserContext(Session.CUSTOMER_CACHE_KEY, indirectedId, context);
 		return false;
 	}

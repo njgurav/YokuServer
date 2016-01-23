@@ -7,7 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import com.yoku.server.exception.session.InvalidLoginHeadersException;
 import com.yoku.server.exception.session.InvalidUserException;
+import com.yoku.server.exception.session.LoginSessionException;
+import com.yoku.server.exception.session.MandatoryLoginException;
 import com.yoku.server.framework.dto.BaseDTO;
 import com.yoku.server.fw.authentication.session.SessionManager;
 
@@ -51,16 +54,22 @@ public abstract class AbstractRestService {
 	 * @throws InvalidUserException
 	 *             If logged in merchant user fails to provide the correct
 	 *             validation data (auth-token and deviceId).s
+	 * @throws MandatoryLoginException
+	 *             Throw this exception when a user tries to access a service
+	 *             that requires authentication, and the authentication data is
+	 *             not provided.
 	 */
-	protected String beginMerchantSession(String userId) throws InvalidUserException {
+	protected String beginMerchantSession(String userId) throws LoginSessionException {
 		String authToken = request.getHeader("auth-token");
 		String deviceId = request.getHeader("device-hash");
+		if (authToken == null || deviceId == null) {
+			throw new InvalidLoginHeadersException();
+		}
 		return new SessionManager().validateMerchant(userId, authToken, deviceId);
 	}
 
 	/**
-	 * Validates ninja session and returns Actual ninjaId for service
-	 * Execution.
+	 * Validates ninja session and returns Actual ninjaId for service Execution.
 	 * 
 	 * @param userId
 	 *            ninjaId from client (indirected)
@@ -68,8 +77,12 @@ public abstract class AbstractRestService {
 	 * @throws InvalidUserException
 	 *             If logged in ninja user fails to provide the correct
 	 *             validation data (auth-token and deviceId).s
+	 * @throws MandatoryLoginException
+	 *             Throw this exception when a user tries to access a service
+	 *             that requires authentication, and the authentication data is
+	 *             not provided.
 	 */
-	protected String beginNinjaSession(String userId) throws InvalidUserException {
+	protected String beginNinjaSession(String userId) throws InvalidUserException, MandatoryLoginException {
 		String authToken = request.getHeader("auth-token");
 		String deviceId = request.getHeader("device-hash");
 		return new SessionManager().validateNinja(userId, authToken, deviceId);
@@ -85,8 +98,12 @@ public abstract class AbstractRestService {
 	 * @throws InvalidUserException
 	 *             If logged in customer user fails to provide the correct
 	 *             validation data (auth-token and deviceId).s
+	 * @throws MandatoryLoginException
+	 *             Throw this exception when a user tries to access a service
+	 *             that requires authentication, and the authentication data is
+	 *             not provided.
 	 */
-	protected String beginCustomerSession(String userId) throws InvalidUserException {
+	protected String beginCustomerSession(String userId) throws InvalidUserException, MandatoryLoginException {
 		String authToken = request.getHeader("auth-token");
 		String deviceId = request.getHeader("device-hash");
 		return new SessionManager().validateCustomer(userId, authToken, deviceId);

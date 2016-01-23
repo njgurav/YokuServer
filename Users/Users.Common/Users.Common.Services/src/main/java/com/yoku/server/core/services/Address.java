@@ -61,8 +61,10 @@ public class Address extends AbstractService {
 	 * Add address for the provided id in the application.
 	 * 
 	 * @param id
-	 *            To store address against in the database. Id can be
-	 *            merchantId, customerId, orderId, etc.
+	 *            To store address against in the database. Id is addressId for
+	 *            the entity. UserId can be merchantId, customerId, orderId (a
+	 *            temporary delivery address), etc. in case a customer stores
+	 *            more than one address as preference.
 	 * @param addressDTO
 	 *            Address containing data to be stored in the database.
 	 * @return status of the operation.

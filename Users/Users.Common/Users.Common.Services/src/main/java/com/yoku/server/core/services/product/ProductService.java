@@ -359,23 +359,23 @@ public class ProductService extends AbstractService {
 		return (MerchantBusinessViewEntity) merchantBusinessViewEntity.get(0);
 	}
 	
-	public EndorsedProductResponseDTO getEndorsedBusiness(String merchantID){
-		MerchantBusinessViewEntity merchantBusinessViewEntity=getMerchantBusinessDetails(merchantID);
+	public EndorsedProductResponseDTO getEndorsedBusiness(String merchantId){
+		MerchantBusinessViewEntity merchantBusinessViewEntity=getMerchantBusinessDetails(merchantId);
 		EndorsedProductResponseDTO response= new EndorsedProductResponseDTO();
 		if(merchantBusinessViewEntity!=null){
 			response.setBusinessCategory(merchantBusinessViewEntity.getBusinessCategory());
 		}
-		response.setMerchantID(merchantID);
+		response.setMerchantID(merchantId);
 		return response;
 	}
 	
 	@SuppressWarnings("unchecked")
-	public MerchantProductSubCategoryResponseDTO getSubCategoryForEndorsedProduct(String businessCategory){
+	public MerchantProductSubCategoryResponseDTO getSubCategoryForEndorsedProduct(String merchantId, String businessCategory){
 		MerchantProductSubCategoryResponseDTO response=new MerchantProductSubCategoryResponseDTO();
 		String query;
 		List<ProductSubCategory> productSubCategory = new ArrayList<ProductSubCategory>();
 		IRepositoryAdapter<ProductSubCategory, ?> adapter = RepositoryAdapterFactory.getRepositoryAdapter(
-				super.getORMProvider("com.yoku.server.core.services.product.ProductService..getSubCategoryForEndorsedProduct"));
+				super.getORMProvider("com.yoku.server.core.services.product.ProductService.getSubCategoryForEndorsedProduct"));
 		
 		query="from ProductSubCategory productSubCategory where productSubCategory.businessCategory = '" + businessCategory + "'";
 		productSubCategory = (List<ProductSubCategory>) adapter.executeReadQuery(query);
