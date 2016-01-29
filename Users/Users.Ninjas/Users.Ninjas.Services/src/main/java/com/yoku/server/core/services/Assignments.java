@@ -105,13 +105,13 @@ public class Assignments {
 					
 					LocationDTO from = new LocationDTO();
 					//from.setAddress(dbResult.getString("senderAddress"));
-					from.setLatitude(Double.parseDouble(dbResult.getString("senderLatitude")));
-					from.setLongitude(Double.parseDouble(dbResult.getString("senderLongitude")));
+					from.setLatitude((dbResult.getString("senderLatitude")));
+					from.setLongitude((dbResult.getString("senderLongitude")));
 					
 					LocationDTO to = new LocationDTO();
 					//to.setAddress(dbResult.getString("receiverAddress"));
-					to.setLatitude(Double.parseDouble(dbResult.getString("receiverLatitude")));
-					to.setLongitude(Double.parseDouble(dbResult.getString("receiverLongitude")));
+					to.setLatitude((dbResult.getString("receiverLatitude")));
+					to.setLongitude((dbResult.getString("receiverLongitude")));
 					
 					SenderInfo senderInfo = new SenderInfo();
 					senderInfo.setCompanyAddress(dbResult.getString("companyAddress"));

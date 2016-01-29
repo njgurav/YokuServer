@@ -5,6 +5,26 @@ package com.yoku.server.infra.idgeneration.factory;
  */
 public enum GeneratorType {
 	/**
+	 * ALert Id Generator
+	 */
+	ALERT_ID,
+	/**
+	 * AddressId generator
+	 */
+	ADDRESS_ID,
+	/**
+	 * Complaint Id Generator
+	 */
+	COMPLAINT_ID,
+	/**
+	 * Customer Onboard Id
+	 */
+	CUSTOMER_ONBOARD_ID,
+	/**
+	 * Customer Id Generator
+	 */
+	CUSTOMER_ID,
+	/**
 	 * Merchant ID Generator
 	 */
 	MERCHANT_ID,
@@ -20,22 +40,7 @@ public enum GeneratorType {
 	 * Ninja Registration Id Generator
 	 */
 	NINJA_ONBOARD_ID,
-	/**
-	 * Customer Onboard Id
-	 */
-	CUSTOMER_ONBOARD_ID,
-	/**
-	 * Customer Id Generator
-	 */
-	CUSTOMER_ID,
-	/**
-	 * Complaint Id Generator
-	 */
-	COMPLAINT_ID,
-	/**
-	 * ALert Id Generator
-	 */
-	ALERT_ID,
+	
 	/**
 	 * Notification Id Generator
 	 */
@@ -47,7 +52,7 @@ public enum GeneratorType {
 	/**
 	 * Product Id Generator
 	 */
-	PRODUCT_ID,
+	PRODUCT_ID
 	
 
 }

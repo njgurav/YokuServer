@@ -6,6 +6,9 @@ import com.yoku.server.framework.assembler.common.AddressAssembler;
 import com.yoku.server.framework.core.orm.factory.RepositoryAdapterFactory;
 import com.yoku.server.framework.dto.TransactionStatus;
 import com.yoku.server.framework.entity.common.AddressKey;
+import com.yoku.server.infra.idgeneration.factory.AbstractIdGeneratorFactory;
+import com.yoku.server.infra.idgeneration.factory.GeneratorType;
+import com.yoku.server.infra.idgeneration.generators.IIdGenerator;
 import com.yoku.server.infra.logger.ILogger;
 import com.yoku.server.infra.logger.LoggerFactory;
 
@@ -60,11 +63,12 @@ public class Address extends AbstractService {
 	/**
 	 * Add address for the provided id in the application.
 	 * 
-	 * @param id
-	 *            To store address against in the database. Id is addressId for
-	 *            the entity. UserId can be merchantId, customerId, orderId (a
-	 *            temporary delivery address), etc. in case a customer stores
-	 *            more than one address as preference.
+	 * To store address in the database, generate an AddressId.
+	 * 
+	 * UserId can be merchantId, customerId, orderId (a temporary delivery
+	 * address), etc. in case a customer stores more than one address as
+	 * preference.
+	 * 
 	 * @param addressDTO
 	 *            Address containing data to be stored in the database.
 	 * @return status of the operation.
@@ -74,7 +78,8 @@ public class Address extends AbstractService {
 		TransactionStatus status = new TransactionStatus();
 
 		logger.info("Inside Address Core Service, AddressID : " + addressId + " Saving Address : " + addressDTO);
-		addressDTO.setId(addressId);
+		IIdGenerator<String> generator = AbstractIdGeneratorFactory.getIdGenerator(GeneratorType.ADDRESS_ID);
+		addressDTO.setId(generator.nextId());
 		com.yoku.server.framework.entity.common.Address address = new AddressAssembler().toEntity(addressDTO);
 		IRepositoryAdapter<com.yoku.server.framework.entity.common.Address, AddressKey> adapter = RepositoryAdapterFactory
 				.getRepositoryAdapter(super.getORMProvider("com.yoku.server.core.services.Address.save"));

@@ -17,6 +17,16 @@ public class AddressDTO extends BaseDTO {
 	 */
 	private String id;
 	/**
+	 * User Type identifier.
+	 */
+	private String userType;
+	/**
+	 * User Id for which this address is being saved.
+	 */
+	private String userId;
+	
+
+	/**
 	 * Country
 	 */
 	private String country;
@@ -44,6 +54,44 @@ public class AddressDTO extends BaseDTO {
 	 * Address LandMark.
 	 */
 	private String landmark;
+	/**
+	 * Title
+	 */
+	private String title;
+	/**
+	 * Description
+	 */
+	private String description;
+
+	
+	/**
+	 * @return the title
+	 */
+	public String getTitle() {
+		return title;
+	}
+
+	/**
+	 * @param title the title to set
+	 */
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
+	/**
+	 * @return the description
+	 */
+	public String getDescription() {
+		return description;
+	}
+
+	/**
+	 * @param description the description to set
+	 */
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
 	/**
 	 * GPS location of Address of the Resource.
 	 */
@@ -174,8 +222,9 @@ public class AddressDTO extends BaseDTO {
 	 */
 	@Override
 	public String toString() {
-		return "AddressDTO [id=" + id + ", country=" + country + ", state=" + state + ", city=" + city + ", zipcode="
-				+ zipcode + ", line1=" + line1 + ", line2=" + line2 + ", landmark=" + landmark + ", location="
+		return "AddressDTO [id=" + id + ", userType=" + userType + ", userId=" + userId + ", country=" + country
+				+ ", state=" + state + ", city=" + city + ", zipcode=" + zipcode + ", line1=" + line1 + ", line2="
+				+ line2 + ", landmark=" + landmark + ", title=" + title + ", description=" + description + ", location="
 				+ location + "]";
 	}
 
@@ -192,5 +241,32 @@ public class AddressDTO extends BaseDTO {
 	public void setId(String id) {
 		this.id = id;
 	}
+	
+	/**
+	 * @return the userType
+	 */
+	public String getUserType() {
+		return userType;
+	}
 
+	/**
+	 * @param userType the userType to set
+	 */
+	public void setUserType(String userType) {
+		this.userType = userType;
+	}
+
+	/**
+	 * @return the userId
+	 */
+	public String getUserId() {
+		return userId;
+	}
+
+	/**
+	 * @param userId the userId to set
+	 */
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
 }

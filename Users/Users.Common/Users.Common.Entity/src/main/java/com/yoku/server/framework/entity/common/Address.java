@@ -1,11 +1,17 @@
 package com.yoku.server.framework.entity.common;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.swing.text.StyleConstants.ColorConstants;
 
 import com.yoku.server.framework.entity.core.IEntity;
+import com.yoku.server.infra.constants.Constants;
 
 /**
  * Address Entity for table 'tbl_address".
@@ -19,123 +25,112 @@ public class Address implements IEntity {
 	 */
 	private static final long serialVersionUID = 5487215930467935259L;
 	/**
-	 * Private key
+	 * Primary key. AddressId.
 	 */
 	@EmbeddedId
 	private AddressKey key;
-	
-	/**
-	 * Identifier for the user for whom the address is being stored.
-	 */
-	@Column(name="user_id")
-	private String userId;
-	
 
 	/**
-	 * Latitude
+	 * Identifier for the user for whom the address is being stored.
+	 *
+	 * Contains value pertaining to
+	 * <ul>
+	 * <li>MerchantId (Location of his store)</li>
+	 * <li>CustomerId (Delivery addresses for orders)</li>
+	 * <li>NinjaId (Residential Address, etc)</li>
+	 * </ul>
+	 * 
 	 */
-	@Column(name = "latitude")
-	private Double latitude;
+	@Column(name = "user_id")
+	private String userId;
+	
+	
 	/**
-	 * Longitude
+	 * Identifies user type for which this address is being stored. Should have
+	 * one of the following values
+	 * <ul>
+	 * <li>MERCHANT {@link Constants.USER_MERCHANT}</li>
+	 * <li>CUSTOMER {@link Constants.USER_CUSTOMER}}</li>
+	 * <li>NINJA {@link Constants.USER_NINJA}</li>
+	 * </ul>
 	 */
-	@Column(name = "longitude")
-	private Double longitude;
+	@Column(name="user_type")
+	private String userType;
+	
 	/**
-	 * PlaceId. Mostly google placeId.
+	 * Location info for the current address.
 	 */
-	@Column(name = "place_id")
-	private String placeId;
+	@OneToOne(fetch = FetchType.EAGER, mappedBy="address", cascade=CascadeType.ALL)
+	private Location location;
+
 	/**
-	 * Title
+	 * @return the userType
+	 */
+	public String getUserType() {
+		return userType;
+	}
+
+	/**
+	 * @param userType the userType to set
+	 */
+	public void setUserType(String userType) {
+		this.userType = userType;
+	}
+
+	/**
+	 * Title. Especially for the customer where user has more than one delivery
+	 * address. Or Ninja Residential Temporary or permanent address.
 	 */
 	@Column(name = "title")
 	private String title;
+
 	/**
 	 * Description
 	 */
 	@Column(name = "description")
 	private String description;
+
 	/**
 	 * Country
 	 */
 	@Column(name = "country")
 	private String country;
+
 	/**
 	 * State
 	 */
 	@Column(name = "state")
 	private String state;
+
 	/**
 	 * City
 	 */
 	@Column(name = "city")
 	private String city;
+
 	/**
 	 * Zipcode
 	 */
 	@Column(name = "zip")
 	private Integer zipcode;
+
 	/**
 	 * Line 1 of Address
 	 */
 	@Column(name = "line1")
 	private String line1;
+
 	/**
 	 * Line 2 of Address
 	 */
 	@Column(name = "line2")
 	private String line2;
+
 	/**
 	 * Address LandMark.
 	 */
 	@Column(name = "landmark")
 	private String landmark;
-
-	/**
-	 * @return the latitude
-	 */
-	public Double getLatitude() {
-		return latitude;
-	}
-
-	/**
-	 * @param latitude
-	 *            the latitude to set
-	 */
-	public void setLatitude(Double latitude) {
-		this.latitude = latitude;
-	}
-
-	/**
-	 * @return the longitude
-	 */
-	public Double getLongitude() {
-		return longitude;
-	}
-
-	/**
-	 * @param longitude
-	 *            the longitude to set
-	 */
-	public void setLongitude(Double longitude) {
-		this.longitude = longitude;
-	}
-
-	/**
-	 * @return the placeId
-	 */
-	public String getPlaceId() {
-		return placeId;
-	}
-
-	/**
-	 * @param placeId
-	 *            the placeId to set
-	 */
-	public void setPlaceId(String placeId) {
-		this.placeId = placeId;
-	}
 
 	/**
 	 * @return the title
@@ -271,7 +266,6 @@ public class Address implements IEntity {
 	public void setLandmark(String landmark) {
 		this.landmark = landmark;
 	}
-	
 
 	/**
 	 * @return the key
@@ -281,12 +275,13 @@ public class Address implements IEntity {
 	}
 
 	/**
-	 * @param key the key to set
+	 * @param key
+	 *            the key to set
 	 */
 	public void setKey(AddressKey key) {
 		this.key = key;
 	}
-	
+
 	/**
 	 * @return the userId
 	 */
@@ -295,21 +290,36 @@ public class Address implements IEntity {
 	}
 
 	/**
-	 * @param userId the userId to set
+	 * @param userId
+	 *            the userId to set
 	 */
 	public void setUserId(String userId) {
 		this.userId = userId;
 	}
+	
+	/**
+	 * @return the loaction
+	 */
+	public Location getLocation() {
+		return location;
+	}
+
+	/**
+	 * @param location the loaction to set
+	 */
+	public void setLocation(Location location) {
+		this.location = location;
+	}
+
 
 	/** (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
 	public String toString() {
-		return "Address [key=" + key + ", userId=" + userId + ", latitude=" + latitude + ", longitude=" + longitude
-				+ ", placeId=" + placeId + ", title=" + title + ", description=" + description + ", country=" + country
-				+ ", state=" + state + ", city=" + city + ", zipcode=" + zipcode + ", line1=" + line1 + ", line2="
-				+ line2 + ", landmark=" + landmark + "]";
+		return "Address [key=" + key + ", userId=" + userId + ", userType=" + userType + ", title=" + title
+				+ ", description=" + description + ", country=" + country + ", state=" + state + ", city=" + city
+				+ ", zipcode=" + zipcode + ", line1=" + line1 + ", line2=" + line2 + ", landmark=" + landmark + "]";
 	}
 
 }

@@ -20,6 +20,12 @@ import com.yoku.server.fw.authentication.session.SessionManager;
 public abstract class AbstractRestService {
 
 	/**
+	 * Security flag. Temporary hard coded. This value should be fetched from
+	 * Preferences and configurations.
+	 */
+	private static final boolean SECURITY_ENABLED = false;
+
+	/**
 	 * {@link HttpServletRequest} instance to fetch header data for validation
 	 * and other activities.
 	 */
@@ -60,12 +66,15 @@ public abstract class AbstractRestService {
 	 *             not provided.
 	 */
 	protected String beginMerchantSession(String userId) throws LoginSessionException {
-		String authToken = request.getHeader("auth-token");
-		String deviceId = request.getHeader("device-hash");
-		if (authToken == null || deviceId == null) {
-			throw new InvalidLoginHeadersException();
+		if (SECURITY_ENABLED) {
+			String authToken = request.getHeader("auth-token");
+			String deviceId = request.getHeader("device-hash");
+			if (authToken == null || deviceId == null) {
+				throw new InvalidLoginHeadersException();
+			}
+			return new SessionManager().validateMerchant(userId, authToken, deviceId);
 		}
-		return new SessionManager().validateMerchant(userId, authToken, deviceId);
+		return userId;
 	}
 
 	/**
@@ -83,9 +92,13 @@ public abstract class AbstractRestService {
 	 *             not provided.
 	 */
 	protected String beginNinjaSession(String userId) throws InvalidUserException, MandatoryLoginException {
-		String authToken = request.getHeader("auth-token");
-		String deviceId = request.getHeader("device-hash");
-		return new SessionManager().validateNinja(userId, authToken, deviceId);
+		if (SECURITY_ENABLED) {
+			String authToken = request.getHeader("auth-token");
+			String deviceId = request.getHeader("device-hash");
+			return new SessionManager().validateNinja(userId, authToken, deviceId);
+		} else {
+			return userId;
+		}
 	}
 
 	/**
@@ -104,9 +117,13 @@ public abstract class AbstractRestService {
 	 *             not provided.
 	 */
 	protected String beginCustomerSession(String userId) throws InvalidUserException, MandatoryLoginException {
-		String authToken = request.getHeader("auth-token");
-		String deviceId = request.getHeader("device-hash");
-		return new SessionManager().validateCustomer(userId, authToken, deviceId);
+		if (SECURITY_ENABLED) {
+			String authToken = request.getHeader("auth-token");
+			String deviceId = request.getHeader("device-hash");
+			return new SessionManager().validateCustomer(userId, authToken, deviceId);
+		} else {
+			return userId;
+		}
 	}
 
 	/**

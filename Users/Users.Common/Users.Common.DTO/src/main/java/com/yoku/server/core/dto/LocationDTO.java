@@ -5,6 +5,16 @@ import com.yoku.server.framework.dto.BaseDTO;
 /**
  * Location DTO. GPS location. Used in AddressDTO to store GPS position of an
  * address.
+ * 
+ * Use:
+ * <ul>
+ * <li><b> + (plus)</b> for N Latitude or E Longitude</li>
+ * <li><b> - (Minus)</b> for S Latitude or W Longitude.</li>
+ * </ul>
+ * 
+ * Example: +40.689060 -74.044636
+ * 
+ * Note: Your entry should not have any embedded spaces.
  */
 public class LocationDTO extends BaseDTO {
 
@@ -16,28 +26,20 @@ public class LocationDTO extends BaseDTO {
 	/**
 	 * Latitude
 	 */
-	private Double latitude;
+	private String latitude;
 	/**
 	 * Longitude
 	 */
-	private Double longitude;
+	private String longitude;
 	/**
 	 * PlaceId. Mostly google placeId.
 	 */
 	private String placeId;
-	/**
-	 * Title
-	 */
-	private String title;
-	/**
-	 * Description
-	 */
-	private String description;
 
 	/**
 	 * @return the latitude
 	 */
-	public Double getLatitude() {
+	public String getLatitude() {
 		return latitude;
 	}
 
@@ -45,14 +47,14 @@ public class LocationDTO extends BaseDTO {
 	 * @param latitude
 	 *            the latitude to set
 	 */
-	public void setLatitude(Double latitude) {
+	public void setLatitude(String latitude) {
 		this.latitude = latitude;
 	}
 
 	/**
 	 * @return the longitude
 	 */
-	public Double getLongitude() {
+	public String getLongitude() {
 		return longitude;
 	}
 
@@ -60,7 +62,7 @@ public class LocationDTO extends BaseDTO {
 	 * @param longitude
 	 *            the longitude to set
 	 */
-	public void setLongitude(Double longitude) {
+	public void setLongitude(String longitude) {
 		this.longitude = longitude;
 	}
 
@@ -79,40 +81,14 @@ public class LocationDTO extends BaseDTO {
 		this.placeId = placeId;
 	}
 
-	/**
-	 * @return the title
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#toString()
 	 */
-	public String getTitle() {
-		return title;
-	}
-
-	/**
-	 * @param title
-	 *            the title to set
-	 */
-	public void setTitle(String title) {
-		this.title = title;
-	}
-
-	/**
-	 * @return the description
-	 */
-	public String getDescription() {
-		return description;
-	}
-
-	/**
-	 * @param description
-	 *            the description to set
-	 */
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
 	@Override
 	public String toString() {
-		return "LocationInformationDTO [latitude=" + latitude + ", longitude=" + longitude + ", placeId=" + placeId
-				+ ", title=" + title + ", description=" + description + "]";
+		return "LocationDTO [latitude=" + latitude + ", longitude=" + longitude + ", placeId=" + placeId + "]";
 	}
 
 }

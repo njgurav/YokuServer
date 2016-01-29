@@ -1,5 +1,6 @@
 package com.yoku.server.infra.idgeneration.factory;
 
+import com.yoku.server.infra.idgeneration.generators.AddressIdGen;
 import com.yoku.server.infra.idgeneration.generators.AlertIdGen;
 import com.yoku.server.infra.idgeneration.generators.ComplaintIdGen;
 import com.yoku.server.infra.idgeneration.generators.CustomerIdGen;
@@ -34,6 +35,9 @@ public abstract class AbstractIdGeneratorFactory {
 	public static IIdGenerator getIdGenerator(GeneratorType generatorType) {
 		// switch arranged in ascending order
 		switch (generatorType) {
+		case ADDRESS_ID :
+			generator = AddressIdGen.getInstance();
+			break;
 		case ALERT_ID:
 			generator = AlertIdGen.getInstance();
 			break;
