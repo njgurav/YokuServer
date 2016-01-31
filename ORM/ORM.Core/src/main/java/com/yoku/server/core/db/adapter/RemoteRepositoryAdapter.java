@@ -35,9 +35,9 @@ public class RemoteRepositoryAdapter<AbstractEntity,AbstractEntityKey> implement
 		return null;
 	}
 
-	public Integer delete(AbstractEntity entity) {
+	public boolean delete(AbstractEntity entity) {
 		// TODO Auto-generated method stub
-		return null;
+		return false;
 	}
 
 	@Override
@@ -74,6 +74,12 @@ public class RemoteRepositoryAdapter<AbstractEntity,AbstractEntityKey> implement
 	public AbstractEntity fetchByID(Class<AbstractEntity> entityClass, Serializable id) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public int executeUpdateQuery(String query) {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
 	

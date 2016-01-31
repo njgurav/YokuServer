@@ -26,7 +26,7 @@ public class Location implements IEntity {
 	 * Reference key to AddressId
 	 */
 	@EmbeddedId
-	private LocationKey key;
+	private AddressKey key;
 	/**
 	 * Latitude
 	 */
@@ -64,7 +64,7 @@ public class Location implements IEntity {
 	/**
 	 * @return the key
 	 */
-	public LocationKey getKey() {
+	public AddressKey getKey() {
 		return key;
 	}
 
@@ -72,7 +72,7 @@ public class Location implements IEntity {
 	 * @param key
 	 *            the key to set
 	 */
-	public void setKey(LocationKey key) {
+	public void setKey(AddressKey key) {
 		this.key = key;
 	}
 

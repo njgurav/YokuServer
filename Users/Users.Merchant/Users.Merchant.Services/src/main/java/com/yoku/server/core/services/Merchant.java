@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.yoku.server.core.db.adapter.IRepositoryAdapter;
+import com.yoku.server.core.queries.QueryConstants;
 import com.yoku.server.framework.alerts.AlertsManager;
 import com.yoku.server.framework.alerts.events.Event;
 import com.yoku.server.framework.assembler.merchant.MerchantAssembler;
@@ -309,9 +310,10 @@ public class Merchant extends AbstractService {
 			merchant = it.next();
 			response.setMerchantId(merchant.getKey().getMerchantId());
 		} else {
-			adapter = RepositoryAdapterFactory
-					.getRepositoryAdapter(super.getORMProvider("com.yoku.server.core.services.Merchant.getMerchantId"));
-			query = "SELECT m.registration_id,s.merchant_name,y.email_id,y.phone_number FROM mer_reg_master m join mer_reg_primary y on (m.registration_id = y.registration_id and m.registration_id=:reg_id) JOIN mer_reg_business s on (m.registration_id = s.registration_id ) JOIN mer_reg_payment t on (m.registration_id = t.registration_id)";
+//			adapter = RepositoryAdapterFactory
+//					.getRepositoryAdapter(super.getORMProvider("com.yoku.server.core.services.Merchant.getMerchantId"));
+//			query = "SELECT m.registration_id,s.merchant_name,y.email_id,y.phone_number FROM mer_reg_master m join mer_reg_primary y on (m.registration_id = y.registration_id and m.registration_id=:reg_id) JOIN mer_reg_business s on (m.registration_id = s.registration_id ) JOIN mer_reg_payment t on (m.registration_id = t.registration_id)";
+			query = QueryConstants.FETCH_MERCHANT_DATA_IF_REG_SUCCESS;
 			Map params = new HashMap();
 			params.put("reg_id", registrationId);
 			merchants = adapter.executeSQLQuery(query, params);

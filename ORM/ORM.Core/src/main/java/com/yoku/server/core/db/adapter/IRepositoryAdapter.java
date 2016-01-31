@@ -26,7 +26,16 @@ public interface IRepositoryAdapter<T, K> {
 	/**
 	 * Persist to datastore : Delete
 	 */
-	public Integer delete(T entity);
+	public boolean delete(T entity);
+
+	/**
+	 * Execute Hibernate query : update / delete
+	 * 
+	 * @param query
+	 *            query to execute
+	 * @return count of the rows affected.
+	 */
+	public int executeUpdateQuery(String query);
 
 	/**
 	 * Execute Hibernate query
@@ -69,12 +78,12 @@ public interface IRepositoryAdapter<T, K> {
 	 * @return
 	 */
 	public List executeSQLQuery(String queryString, Class<?> entity, Map<String, ?> params);
-	
+
 	/**
 	 * Delete an Entity on the basis of ID
 	 */
 	public boolean deleteById(Class<?> type, Serializable id);
-	
+
 	/**
 	 * Fetch entity with ID
 	 */

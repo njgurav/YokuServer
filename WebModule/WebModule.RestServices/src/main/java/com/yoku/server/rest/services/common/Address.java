@@ -6,8 +6,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.yoku.server.address.dto.AddressRequestDTO;
+import com.yoku.server.address.dto.AddressReadResponseDTO;
 import com.yoku.server.core.dto.AddressDTO;
 import com.yoku.server.exception.session.LoginSessionException;
 import com.yoku.server.framework.dto.BaseDTO;
@@ -21,14 +24,14 @@ import com.yoku.server.rest.services.AbstractRestService;
  * Address management
  */
 @RestController
-@RequestMapping(value = "/address")
+@RequestMapping(value = "/user/{userId}/address")
 public class Address extends AbstractRestService {
 
 	/**
 	 * Logger instance.
 	 */
 	private static final ILogger logger = LoggerFactory.getLogger(Address.class);
-	
+
 	/**
 	 * Add address for the provided id in the application.
 	 * 
@@ -43,7 +46,7 @@ public class Address extends AbstractRestService {
 	 *            Address containing data to be stored in the database.
 	 * @return status of the operation.
 	 */
-	@RequestMapping(value="/{userId}", method = RequestMethod.POST, consumes = Constants.APPLICATION_JSON, produces = Constants.APPLICATION_JSON)
+	@RequestMapping(method = RequestMethod.POST, consumes = Constants.APPLICATION_JSON, produces = Constants.APPLICATION_JSON)
 	public ResponseEntity<BaseDTO> save(@PathVariable String userId, @RequestBody AddressDTO address) {
 		HttpStatus httpStatus = null;
 		String addressUserId = null;
@@ -51,16 +54,78 @@ public class Address extends AbstractRestService {
 		try {
 			if (Constants.USER_MERCHANT.equals(address.getUserType())) {
 				addressUserId = super.beginMerchantSession(userId);
-			}else if(Constants.USER_CUSTOMER.equals(address.getUserType())){
+			} else if (Constants.USER_CUSTOMER.equals(address.getUserType())) {
 				addressUserId = super.beginCustomerSession(userId);
-			} else if(Constants.USER_NINJA.equals(address.getUserType())){
+			} else if (Constants.USER_NINJA.equals(address.getUserType())) {
 				addressUserId = super.beginNinjaSession(userId);
 			}
-			httpStatus = HttpStatus.OK;
-			address.setUserId(addressUserId);			
-			com.yoku.server.core.services.Address service = new com.yoku.server.core.services.Address(null);
+			com.yoku.server.core.services.Address service = new com.yoku.server.core.services.Address(addressUserId);
 			status = service.save(address);
-			
+			httpStatus = HttpStatus.OK;
+		} catch (LoginSessionException e) {
+			httpStatus = HttpStatus.BAD_REQUEST;
+			logger.error(e.getMessage(), e);
+		}
+		return super.buildResponse(httpStatus, status);
+	}
+
+	/**
+	 * Read all Addresses for the provided UserId in the application.
+	 * 
+	 * @param userId
+	 *            To read address from the database. Id can be merchantId,
+	 *            customerId, orderId, etc.
+	 * @return addresses for the provided Id.
+	 */
+	@RequestMapping(method = RequestMethod.GET, produces = Constants.APPLICATION_JSON)
+	public ResponseEntity<BaseDTO> read(@PathVariable String userId, @RequestParam(value="userType") String userType) {
+		HttpStatus httpStatus = null;
+		String addressUserId = null;
+		AddressReadResponseDTO addresses = null;
+		try {
+			if (Constants.USER_MERCHANT.equals(userType)) {
+				addressUserId = super.beginMerchantSession(userId);
+			} else if (Constants.USER_CUSTOMER.equals(userType)) {
+				addressUserId = super.beginCustomerSession(userId);
+			} else if (Constants.USER_NINJA.equals(userType)) {
+				addressUserId = super.beginNinjaSession(userId);
+			}
+
+			com.yoku.server.core.services.Address service = new com.yoku.server.core.services.Address(addressUserId);
+			addresses = service.read();
+			httpStatus = HttpStatus.OK;
+
+		} catch (LoginSessionException e) {
+			httpStatus = HttpStatus.BAD_REQUEST;
+			logger.error(e.getMessage(), e);
+		}
+		return super.buildResponse(httpStatus, addresses);
+	}
+	
+	/**
+	 * Deletes all Addresses for the provided UserId in the application.
+	 * 
+	 * @param userId
+	 *            To read address from the database. Id can be merchantId,
+	 *            customerId, orderId, etc.
+	 * @return addresses for the provided Id.
+	 */
+	@RequestMapping(method = RequestMethod.DELETE, produces = Constants.APPLICATION_JSON)
+	public ResponseEntity<BaseDTO> deleteAll(@PathVariable String userId, @RequestBody AddressRequestDTO request) {
+		HttpStatus httpStatus = null;
+		String addressUserId = null;
+		TransactionStatus status = null;
+		try {
+			if (Constants.USER_MERCHANT.equals(request.getUserType())) {
+				addressUserId = super.beginMerchantSession(userId);
+			} else if (Constants.USER_CUSTOMER.equals(request.getUserType())) {
+				addressUserId = super.beginCustomerSession(userId);
+			} else if (Constants.USER_NINJA.equals(request.getUserType())) {
+				addressUserId = super.beginNinjaSession(userId);
+			}
+			com.yoku.server.core.services.Address service = new com.yoku.server.core.services.Address(addressUserId);
+			status = service.deleteAll();
+			httpStatus = HttpStatus.OK;
 		} catch (LoginSessionException e) {
 			httpStatus = HttpStatus.BAD_REQUEST;
 			logger.error(e.getMessage(), e);
@@ -78,27 +143,28 @@ public class Address extends AbstractRestService {
 	 * @return status of the operation.
 	 */
 	@RequestMapping(value = "/{addressId}", method = RequestMethod.PUT, consumes = Constants.APPLICATION_JSON, produces = Constants.APPLICATION_JSON)
-	public ResponseEntity<BaseDTO> update(@PathVariable String addressId, @RequestBody AddressDTO address) {
+	public ResponseEntity<BaseDTO> update(@PathVariable String userId, @PathVariable String addressId,
+			@RequestBody AddressDTO address) {
+		HttpStatus httpStatus = null;
+		String addressUserId = null;
 		TransactionStatus status = null;
-		com.yoku.server.core.services.Address service = new com.yoku.server.core.services.Address(addressId);
+		try {
+			if (Constants.USER_MERCHANT.equals(address.getUserType())) {
+				addressUserId = super.beginMerchantSession(userId);
+			} else if (Constants.USER_CUSTOMER.equals(address.getUserType())) {
+				addressUserId = super.beginCustomerSession(userId);
+			} else if (Constants.USER_NINJA.equals(address.getUserType())) {
+				addressUserId = super.beginNinjaSession(userId);
+			}
+		com.yoku.server.core.services.Address service = new com.yoku.server.core.services.Address(addressUserId,addressId );
 		status = service.update(address);
-		return super.buildResponse(HttpStatus.OK, status);
-	}
+		httpStatus = HttpStatus.OK;
 
-	/**
-	 * Read all Addresses for the provided UserId in the application.
-	 * 
-	 * @param userId
-	 *            To read address from the database. Id can be merchantId,
-	 *            customerId, orderId, etc.
-	 * @return addresses for the provided Id.
-	 */
-	@RequestMapping(value="/{userId}", method = RequestMethod.GET, produces = Constants.APPLICATION_JSON)
-	public ResponseEntity<BaseDTO> read(@PathVariable String userId) {
-		AddressDTO address = null;
-		com.yoku.server.core.services.Address service = new com.yoku.server.core.services.Address(userId);
-		address = service.read();
-		return super.buildResponse(HttpStatus.OK, address);
+		} catch (LoginSessionException e) {
+			httpStatus = HttpStatus.BAD_REQUEST;
+			logger.error(e.getMessage(), e);
+		}
+		return super.buildResponse(httpStatus, status);
 	}
 
 	/**
@@ -109,12 +175,27 @@ public class Address extends AbstractRestService {
 	 *            customerId, orderId, etc.
 	 * @return address for the provided Id.
 	 */
-	@RequestMapping(method = RequestMethod.DELETE, produces = Constants.APPLICATION_JSON)
-	public ResponseEntity<BaseDTO> delete(@PathVariable String userId) {
+	@RequestMapping(value="/{addressId}",method = RequestMethod.DELETE, produces = Constants.APPLICATION_JSON)
+	public ResponseEntity<BaseDTO> delete(@PathVariable String userId,@PathVariable String addressId,@RequestBody AddressRequestDTO request) {
+		HttpStatus httpStatus = null;
+		String addressUserId = null;
 		TransactionStatus status = null;
-		com.yoku.server.core.services.Address service = new com.yoku.server.core.services.Address(userId);
+		try {
+			if (Constants.USER_MERCHANT.equals(request.getUserType())) {
+				addressUserId = super.beginMerchantSession(userId);
+			} else if (Constants.USER_CUSTOMER.equals(request.getUserType())) {
+				addressUserId = super.beginCustomerSession(userId);
+			} else if (Constants.USER_NINJA.equals(request.getUserType())) {
+				addressUserId = super.beginNinjaSession(userId);
+			}
+		com.yoku.server.core.services.Address service = new com.yoku.server.core.services.Address(addressUserId, addressId);
 		status = service.delete();
-		return super.buildResponse(HttpStatus.OK, status);
+		httpStatus = HttpStatus.OK;
+		} catch (LoginSessionException e) {
+			httpStatus = HttpStatus.BAD_REQUEST;
+			logger.error(e.getMessage(), e);
+		}
+		return super.buildResponse(httpStatus, status);
 	}
 
 }

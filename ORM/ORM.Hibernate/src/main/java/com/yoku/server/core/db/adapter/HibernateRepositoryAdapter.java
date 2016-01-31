@@ -88,14 +88,16 @@ public class HibernateRepositoryAdapter<T extends IEntity, K extends IEntityKey>
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public Integer delete(IEntity entity) {
+	public boolean delete(IEntity entity) {
 		IORMSessionProvider<Session> sessionProvider = SessionProviderFactory.getORMProvider();
 		Session session = sessionProvider.openSession();
 		Transaction transaction = session.beginTransaction();
 		session.delete((T) entity);
 		transaction.commit();
-		return 1;
+		return true;
 	}
+	
+	
 
 	/**
 	 * Read Query
@@ -109,22 +111,22 @@ public class HibernateRepositoryAdapter<T extends IEntity, K extends IEntityKey>
 		List<T> result = query.list();
 		return result;
 	}
-	
+
 	/**
 	 * Read Query with parameters
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<T> executeReadQuery(String queryString, Map<String,?> params) {
+	public List<T> executeReadQuery(String queryString, Map<String, ?> params) {
 		IORMSessionProvider<Session> sessionProvider = SessionProviderFactory.getORMProvider();
 		Session session = sessionProvider.openSession();
 		Query query = session.createQuery(queryString);
-		if(!params.keySet().isEmpty()){
+		if (!params.keySet().isEmpty()) {
 			Iterator<String> it = params.keySet().iterator();
-			while(it.hasNext()){
-				String key =  it.next();
+			while (it.hasNext()) {
+				String key = it.next();
 				query.setParameter(key, params.get(key));
-			}	
+			}
 		}
 		List<T> result = query.list();
 		return result;
@@ -136,11 +138,11 @@ public class HibernateRepositoryAdapter<T extends IEntity, K extends IEntityKey>
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<T> executeSQLQuery(String queryString, Map<String,?> params) {
+	public List<T> executeSQLQuery(String queryString, Map<String, ?> params) {
 		IORMSessionProvider<Session> sessionProvider = SessionProviderFactory.getORMProvider();
 		Session session = sessionProvider.openSession();
 		SQLQuery query = session.createSQLQuery(queryString);
-		
+
 		if (!params.keySet().isEmpty()) {
 			Iterator<String> it = params.keySet().iterator();
 			while (it.hasNext()) {
@@ -151,25 +153,30 @@ public class HibernateRepositoryAdapter<T extends IEntity, K extends IEntityKey>
 		List<T> result = query.list();
 		return result;
 	}
+
 	/**
 	 * Execute native sql query
-	 * @param queryString query to execute
-	 * @param entity The entity class type to fetch
-	 * @param params Parameter map to add to query
+	 * 
+	 * @param queryString
+	 *            query to execute
+	 * @param entity
+	 *            The entity class type to fetch
+	 * @param params
+	 *            Parameter map to add to query
 	 * @return
 	 */
 	@Override
-	public List executeSQLQuery(String queryString, Class<?> entity, Map<String, ?> params) {
+	public List<T> executeSQLQuery(String queryString, Class<?> entity, Map<String, ?> params) {
 		IORMSessionProvider<Session> sessionProvider = SessionProviderFactory.getORMProvider();
 		Session session = sessionProvider.openSession();
 		SQLQuery query = session.createSQLQuery(queryString);
-		
-		if(!params.keySet().isEmpty()){
+
+		if (!params.keySet().isEmpty()) {
 			Iterator<String> it = params.keySet().iterator();
-			while(it.hasNext()){
+			while (it.hasNext()) {
 				String key = (String) it.next();
 				query.setParameter(key, params.get(key));
-			}	
+			}
 		}
 		query.addEntity(entity);
 		List<T> result = query.list();
@@ -183,13 +190,13 @@ public class HibernateRepositoryAdapter<T extends IEntity, K extends IEntityKey>
 		Transaction transaction = session.beginTransaction();
 		Object persistentInstance = session.load(type, id);
 		if (persistentInstance != null) {
-		     session.delete(persistentInstance);
-		     transaction.commit();
-		     return true;
-		    }
-		    return false;
+			session.delete(persistentInstance);
+			transaction.commit();
+			return true;
+		}
+		return false;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public IEntity fetchByID(Class<IEntity> entityClass, Serializable id) {
 		IORMSessionProvider<Session> sessionProvider = SessionProviderFactory.getORMProvider();
@@ -199,7 +206,16 @@ public class HibernateRepositoryAdapter<T extends IEntity, K extends IEntityKey>
 		transaction.commit();
 		return entity;
 	}
-	
-	
+/**
+ * Execute update query like update or delete
+ */
+	@Override
+	public int executeUpdateQuery(String queryString) {
+		IORMSessionProvider<Session> sessionProvider = SessionProviderFactory.getORMProvider();
+		Session session = sessionProvider.openSession();
+		Query query = session.createQuery(queryString);
+		int rowsUpdated = query.executeUpdate();
+		return rowsUpdated;
+	}
 
 }

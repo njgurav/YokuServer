@@ -32,19 +32,21 @@ public class AddressAssembler {
 		addressDTO.setZipcode(address.getZipcode());
 		addressDTO.setLine1(address.getLine1());
 		addressDTO.setLine2(address.getLine2());
-		
-		location.setLatitude(address.getLocation().getLatitude());
-		location.setLongitude(address.getLocation().getLongitude());
-		location.setPlaceId(address.getLocation().getPlaceId());
-		
+		if (address.getLocation() != null) {
+			location.setLatitude(address.getLocation().getLatitude());
+			location.setLongitude(address.getLocation().getLongitude());
+			location.setPlaceId(address.getLocation().getPlaceId());
+		}
+
 		addressDTO.setLocation(location);
-		
+
 		return addressDTO;
 	}
 
 	/**
-	 * Create address entity from address DTO to persist to data-store.
-	 * If addressDTO contains location data, create Location entity, and store it in the address entity. 
+	 * Create address entity from address DTO to persist to data-store. If
+	 * addressDTO contains location data, create Location entity, and store it
+	 * in the address entity.
 	 * 
 	 * @param addressDTO
 	 * @return
@@ -65,14 +67,15 @@ public class AddressAssembler {
 		address.setLine2(addressDTO.getLine2());
 		address.setDescription(addressDTO.getDescription());
 		address.setTitle(addressDTO.getTitle());
-		if(addressDTO.getLocation() != null){
+		if (addressDTO.getLocation() != null) {
 			Location location = new Location();
-			LocationKey locationKey = new LocationKey();
-			locationKey.setLocationId(addressDTO.getId());
-			location.setKey(locationKey);
-			location.setLatitude(addressDTO.getLocation().getLatitude()!=null?addressDTO.getLocation().getLatitude():null);
-			location.setLongitude(addressDTO.getLocation().getLongitude()!=null?addressDTO.getLocation().getLongitude():null);
-			location.setPlaceId(addressDTO.getLocation().getPlaceId()!=null?addressDTO.getLocation().getPlaceId():null);
+			location.setKey(key);
+			location.setLatitude(
+					addressDTO.getLocation().getLatitude() != null ? addressDTO.getLocation().getLatitude() : null);
+			location.setLongitude(
+					addressDTO.getLocation().getLongitude() != null ? addressDTO.getLocation().getLongitude() : null);
+			location.setPlaceId(
+					addressDTO.getLocation().getPlaceId() != null ? addressDTO.getLocation().getPlaceId() : null);
 			address.setLocation(location);
 		}
 		return address;
